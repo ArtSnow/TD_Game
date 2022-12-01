@@ -42,7 +42,16 @@ namespace CodeMonkey.Utils {
             return new World_Bar(parent, localPosition, localScale, backgroundColor, barColor, sizeRatio, sortingOrder, outline);
         }
 
-        public World_Bar(Transform parent, Vector3 localPosition, Vector3 localScale, Color? backgroundColor, Color barColor, float sizeRatio, int sortingOrder, Outline outline = null) {
+        public World_Bar(Transform parent, Vector3 localPosition, Vector3 localScale, Color? backgroundColor, Color barColor, float sizeRatio, string sortingLayer, int sortingOrder, Outline outline = null) {
+            this.outline = outline;
+            SetupParent(parent, localPosition);
+            if (outline != null) SetupOutline(outline, localScale, sortingOrder - 1);
+            if (backgroundColor != null) SetupBackground((Color)backgroundColor, localScale, sortingOrder);
+            SetupBar(barColor, localScale, sortingLayer, sortingOrder + 1);
+            SetSize(sizeRatio);
+        }
+        public World_Bar(Transform parent, Vector3 localPosition, Vector3 localScale, Color? backgroundColor, Color barColor, float sizeRatio, int sortingOrder, Outline outline = null)
+        {
             this.outline = outline;
             SetupParent(parent, localPosition);
             if (outline != null) SetupOutline(outline, localScale, sortingOrder - 1);
@@ -66,12 +75,21 @@ namespace CodeMonkey.Utils {
             background = UtilsClass.CreateWorldSprite(transform, "Background", Assets.i.s_White, new Vector3(0,0), localScale, sortingOrder, backgroundColor).transform;
         }
 
-        private void SetupBar(Color barColor, Vector3 localScale, int sortingOrder) {
+        private void SetupBar(Color barColor, Vector3 localScale, string sortingLayer, int sortingOrder) {
             GameObject barGO = new GameObject("Bar");
             bar = barGO.transform;
             bar.SetParent(transform);
             bar.localPosition = new Vector3(-localScale.x / 2f, 0, 0);
             bar.localScale = new Vector3(1,1,1);
+            Transform barIn = UtilsClass.CreateWorldSprite(bar, "BarIn", Assets.i.s_White, new Vector3(localScale.x / 2f, 0), localScale, sortingLayer, sortingOrder, barColor).transform;
+        }
+        private void SetupBar(Color barColor, Vector3 localScale, int sortingOrder)
+        {
+            GameObject barGO = new GameObject("Bar");
+            bar = barGO.transform;
+            bar.SetParent(transform);
+            bar.localPosition = new Vector3(-localScale.x / 2f, 0, 0);
+            bar.localScale = new Vector3(1, 1, 1);
             Transform barIn = UtilsClass.CreateWorldSprite(bar, "BarIn", Assets.i.s_White, new Vector3(localScale.x / 2f, 0), localScale, sortingOrder, barColor).transform;
         }
 

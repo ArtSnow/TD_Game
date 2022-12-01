@@ -72,6 +72,21 @@ namespace CodeMonkey.Utils {
             return gameObject;
         }
 
+        public static GameObject CreateWorldSprite(Transform parent, string name, Sprite sprite, Vector3 localPosition, Vector3 localScale, string sortingLayer, int sortingOrder, Color color)
+        {
+            GameObject gameObject = new GameObject(name, typeof(SpriteRenderer));
+            Transform transform = gameObject.transform;
+            transform.SetParent(parent, false);
+            transform.localPosition = localPosition;
+            transform.localScale = localScale;
+            SpriteRenderer spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+            spriteRenderer.sprite = sprite;
+            spriteRenderer.sortingOrder = sortingOrder;
+            spriteRenderer.sortingLayerName = sortingLayer;
+            spriteRenderer.color = color;
+            return gameObject;
+        }
+
         // Create a Sprite in the World with Button_Sprite, no parent
         public static Button_Sprite CreateWorldSpriteButton(string name, Sprite sprite, Vector3 localPosition, Vector3 localScale, int sortingOrder, Color color) {
             return CreateWorldSpriteButton(null, name, sprite, localPosition, localScale, sortingOrder, color);

@@ -15,4 +15,8 @@ public class GameAssets : MonoBehaviour
     }
 
     public Transform pfProjectileBall;
+    public Transform pfTower;
+    public Transform pfEnemy;
+    public Transform pfTerrain;
+    public Sprite[] mapSprites;
 }
