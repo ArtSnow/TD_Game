@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using CodeMonkey.Utils;
+using TMPro;
 
 public class TowerDefenseAI : MonoBehaviour
 {
     [SerializeField] private Transform _cam;
     private GridMap<GridNode> grid;
-    private int map_width = 10;
-    private int map_height = 5;
+    private int map_width = 20;
+    private int map_height = 10;
+    [SerializeField] private TMP_Text energyt;
     private void Awake()
     {
         grid = new GridMap<GridNode>(map_width, map_height, 25f, Vector3.zero, (GridMap<GridNode> g, int x, int y) => new GridNode(g, x, y));
@@ -37,6 +39,7 @@ public class TowerDefenseAI : MonoBehaviour
 
     private void Update()
     {
+        energyt.text = GameResources.i.getEnergy().ToString();
         if (Input.GetKeyDown(KeyCode.B))
         {
             SpawnEnemyWave_1();
@@ -50,29 +53,33 @@ public class TowerDefenseAI : MonoBehaviour
             SpawnEnemyWave_3();
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            SpawnTower();
+            SpawnTower(0);
         }
     }
 
-    private void SpawnTower()
+    private void SpawnTower(int towerIndex)
     {
-
-        Vector3 spawnPosition = UtilsClass.GetMouseWorldPosition();
-        spawnPosition = ValidateWorldGridPosition(spawnPosition);
-        spawnPosition += new Vector3(1, 1, 0) * grid.GetCellSize() * .5f;
-        GridNode gnode = grid.GetGridObject(spawnPosition);
-        if (gnode.GetType() == 0)
+        int price = GameResources.i.getTowerPrice(towerIndex);
+        if (GameResources.i.getEnergy() >= price)
         {
-            Instantiate(GameAssets.i.pfTower, spawnPosition, Quaternion.identity);
+            Vector3 spawnPosition = UtilsClass.GetMouseWorldPosition();
+            spawnPosition = ValidateWorldGridPosition(spawnPosition);
+            spawnPosition += new Vector3(1, 1, 0) * grid.GetCellSize() * .5f;
+            GridNode gnode = grid.GetGridObject(spawnPosition);
+            if (gnode.GetType() == 0)
+            {
+                GameResources.i.addEnergy(-price);
+                Instantiate(GameAssets.i.pfTower, spawnPosition, Quaternion.identity);
+                gnode.SetType(11);
+            }
         }
-        
     }
     private void CreateMap()
     {
-        int[] mapt = {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0};
-        
+        //int[] mapt = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        int[] mapt = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         for (int y = 0; y < map_height; y++)
         {
             for (int x = 0; x < map_width; x++)
@@ -97,13 +104,13 @@ public class TowerDefenseAI : MonoBehaviour
         float spawnTime = 0f;
         float timePerSpawn = .6f;
 
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Yellow), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Yellow), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orange), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Yellow), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Yellow), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orange), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Yellow), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Skelet), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Skelet), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orc), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Skelet), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Skelet), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orc), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Skelet), spawnTime); spawnTime += timePerSpawn;
     }
 
     private void SpawnEnemyWave_2()
@@ -111,13 +118,13 @@ public class TowerDefenseAI : MonoBehaviour
         float spawnTime = 0f;
         float timePerSpawn = .5f;
 
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Yellow), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orange), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orange), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Yellow), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Red), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Yellow), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Red), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Skelet), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orc), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orc), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Skelet), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Bat), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Skelet), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Bat), spawnTime); spawnTime += timePerSpawn;
     }
 
     private void SpawnEnemyWave_3()
@@ -125,22 +132,22 @@ public class TowerDefenseAI : MonoBehaviour
         float spawnTime = 0f;
         float timePerSpawn = .4f;
 
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Yellow), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orange), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Red), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orange), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orange), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Red), spawnTime); spawnTime += timePerSpawn;
-        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Red), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Skelet), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orc), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Bat), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orc), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Orc), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Bat), spawnTime); spawnTime += timePerSpawn;
+        FunctionTimer.Create(() => SpawnEnemy(Enemy.EnemyType.Bat), spawnTime); spawnTime += timePerSpawn;
     }
 
     private void SpawnEnemy(Enemy.EnemyType enemyType)
     {
-        Vector3 spawnPosition = new Vector3(37.5f, 137.5f);
+        Vector3 spawnPosition = new Vector3(37.5f, 262.5f);
         List<Vector3> waypointPositionList = new List<Vector3> {
             new Vector3(37.5f, 62.5f),
-            new Vector3(212.5f, 62.5f),
-            new Vector3(212.5f, -12.5f),
+            new Vector3(387.5f, 62.5f),
+            new Vector3(387.5f, -12.5f),
         };
 
         Enemy enemy = Enemy.Create(spawnPosition, enemyType);
@@ -167,10 +174,10 @@ public class TowerDefenseAI : MonoBehaviour
             Vector3 worldPos10 = grid.GetWorldPosition(x + 1, y);
             Vector3 worldPos01 = grid.GetWorldPosition(x, y + 1);
             Vector3 worldPos11 = grid.GetWorldPosition(x + 1, y + 1);
-            Debug.DrawLine(worldPos00, worldPos01, Color.white, 999f);
-            Debug.DrawLine(worldPos00, worldPos10, Color.white, 999f);
-            Debug.DrawLine(worldPos01, worldPos11, Color.white, 999f);
-            Debug.DrawLine(worldPos10, worldPos11, Color.white, 999f);
+            //Debug.DrawLine(worldPos00, worldPos01, Color.white, 999f);
+            //Debug.DrawLine(worldPos00, worldPos10, Color.white, 999f);
+            //Debug.DrawLine(worldPos01, worldPos11, Color.white, 999f);
+            //Debug.DrawLine(worldPos10, worldPos11, Color.white, 999f);
         }
         public void SetType(int setType)
         {

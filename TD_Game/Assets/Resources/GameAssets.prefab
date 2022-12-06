@@ -63,3 +63,8 @@ MonoBehaviour:
   - {fileID: -872165573, guid: 4372e0c16645a0f44a1f3b4c27d81d10, type: 3}
   - {fileID: -1435243453, guid: 4372e0c16645a0f44a1f3b4c27d81d10, type: 3}
   - {fileID: 857431501, guid: 4372e0c16645a0f44a1f3b4c27d81d10, type: 3}
+  towerSprites: []
+  monsterSprites:
+  - {fileID: 1372366597, guid: 58bc8c9376f38004f968b868803dfe16, type: 3}
+  - {fileID: 2058607165, guid: dbadf83ce0e64f14fb28786ca6d855ec, type: 3}
+  - {fileID: -1947752296, guid: 4037c7ef869d7b3448bcfe088354fb10, type: 3}

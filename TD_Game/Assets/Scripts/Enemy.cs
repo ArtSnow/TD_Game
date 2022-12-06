@@ -4,9 +4,6 @@ using UnityEngine;
 //using V_AnimationSystem;
 using CodeMonkey.Utils;
 
-/*
- * Enemy
- * */
 public class Enemy : MonoBehaviour
 {
 
@@ -64,12 +61,16 @@ public class Enemy : MonoBehaviour
 
     public enum EnemyType
     {
-        Yellow,
-        Orange,
-        Red,
+        Skelet,
+        Orc,
+        Bat,
     }
 
-    private const float SPEED = 30f;
+    private float speed = 30f;
+    private int reward = 0;
+    private float damage = 1f;
+
+
 
     private HealthSystem healthSystem;
     private Character_Base characterBase;
@@ -110,29 +111,30 @@ public class Enemy : MonoBehaviour
 
     private void SetEnemyType(EnemyType enemyType)
     {
-        Material material;
-
+        Sprite sprite;
         switch (enemyType)
         {
             default:
-            case EnemyType.Orange:
-                //material = GameAssets.i.m_EnemyOrange;
+            case EnemyType.Skelet:
+                sprite = GameAssets.i.monsterSprites[0];
                 healthSystem.SetHealthMax(80, true);
+                reward = 10;
+                speed = 30f;
                 break;
-            case EnemyType.Red:
-                //material = GameAssets.i.m_EnemyRed;
+            case EnemyType.Orc:
+                sprite = GameAssets.i.monsterSprites[1];
                 healthSystem.SetHealthMax(130, true);
-                //characterBase.SetIdleWalkAnims(UnitAnimType.GetUnitAnimType("dShielder_Idle"), UnitAnimType.GetUnitAnimType("dShielder_Walk"));
+                reward = 20;
+                speed = 10f;
                 break;
-            case EnemyType.Yellow:
-                //material = GameAssets.i.m_EnemyYellow;
+            case EnemyType.Bat:
+                sprite = GameAssets.i.monsterSprites[2];
                 healthSystem.SetHealthMax(50, true);
-                //characterBase.SetIdleWalkAnims(UnitAnimType.GetUnitAnimType("dArrow_Idle"), UnitAnimType.GetUnitAnimType("dArrow_Walk"));
+                reward = 30;
+                speed = 50f;
                 break;
         }
-
-
-       // transform.Find("Body").GetComponent<MeshRenderer>().material = material;
+       transform.Find("Sprite").GetComponent<SpriteRenderer>().sprite = sprite;
     }
 
     public void SetGetTarget(Func<IEnemyTargetable> getEnemyTarget)
@@ -179,6 +181,7 @@ public class Enemy : MonoBehaviour
         healthSystem.Damage(damageAmount);
         if (IsDead())
         {
+            GameResources.i.addEnergy(reward);
             Destroy(gameObject);
         }
     }
@@ -204,7 +207,7 @@ public class Enemy : MonoBehaviour
                 Vector3 moveDir = (targetPosition - transform.position).normalized;
 
                 float distanceBefore = Vector3.Distance(transform.position, targetPosition);
-                transform.position = transform.position + moveDir * SPEED * Time.deltaTime;
+                transform.position = transform.position + moveDir * speed * Time.deltaTime;
             }
             else
             {

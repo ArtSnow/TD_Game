@@ -19,4 +19,6 @@ public class GameAssets : MonoBehaviour
     public Transform pfEnemy;
     public Transform pfTerrain;
     public Sprite[] mapSprites;
+    public Sprite[] towerSprites;
+    public Sprite[] monsterSprites;
 }
