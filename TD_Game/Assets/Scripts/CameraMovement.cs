@@ -14,10 +14,10 @@ public class CameraMovement : MonoBehaviour
 
     private void Awake()
     {
-        mapMinX = 0;
-        mapMaxX = 20 * 25f;
-        mapMinY = 0;
-        mapMaxY = 10 * 25f;
+        mapMinX = 0 - 75f;
+        mapMaxX = 20 * 25f + 75f;
+        mapMinY = 0 - 75f;
+        mapMaxY = 10 * 25f + 75f;
     }
     // Update is called once per frame
     void Update()

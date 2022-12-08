@@ -67,8 +67,10 @@ public class Enemy : MonoBehaviour
     }
 
     private float speed = 30f;
-    private int reward = 0;
-    private float damage = 1f;
+    private int energyReward = 0;
+    private int coinsReward = 0;
+    private int damage = 1;
+    private int armor = 1;
 
 
 
@@ -118,20 +120,26 @@ public class Enemy : MonoBehaviour
             case EnemyType.Skelet:
                 sprite = GameAssets.i.monsterSprites[0];
                 healthSystem.SetHealthMax(80, true);
-                reward = 10;
+                energyReward = 10;
+                coinsReward = 1;
                 speed = 30f;
+                armor = 1;
                 break;
             case EnemyType.Orc:
                 sprite = GameAssets.i.monsterSprites[1];
                 healthSystem.SetHealthMax(130, true);
-                reward = 20;
+                energyReward = 20;
+                coinsReward = 2;
                 speed = 10f;
+                armor = 3;
                 break;
             case EnemyType.Bat:
                 sprite = GameAssets.i.monsterSprites[2];
                 healthSystem.SetHealthMax(50, true);
-                reward = 30;
+                energyReward = 30;
+                coinsReward = 3;
                 speed = 50f;
+                armor = 0;
                 break;
         }
        transform.Find("Sprite").GetComponent<SpriteRenderer>().sprite = sprite;
@@ -174,23 +182,22 @@ public class Enemy : MonoBehaviour
     }
 
 
-    public void Damage(int damageAmount)
+    public void Damage(float damageAmount)
     {
-        Vector3 bloodDir = UtilsClass.GetRandomDir();
-
-        healthSystem.Damage(damageAmount);
+        healthSystem.Damage(damageAmount-armor);
         if (IsDead())
         {
-            GameResources.i.addEnergy(reward);
+            GameResources.i.addEnergy(energyReward);
+            GameResources.i.addCoins(coinsReward);
             Destroy(gameObject);
         }
     }
 
     public void Damage(IEnemyTargetable attacker)
     {
-        Vector3 bloodDir = (GetPosition() - attacker.GetPosition()).normalized;
-
         healthSystem.Damage(30);
+        GameResources.i.addEnergy(energyReward);
+        GameResources.i.addCoins(coinsReward);
         if (IsDead())
         {
             Destroy(gameObject);
@@ -223,6 +230,9 @@ public class Enemy : MonoBehaviour
     private void StopMoving()
     {
         pathVectorList = null;
+        GameResources.i.addHealth(-damage);
+        healthSystem.Damage(healthSystem.GetHealthMax());
+        Destroy(gameObject);
     }
 
     public void SetTargetPosition(Vector3 targetPosition)

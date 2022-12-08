@@ -15,22 +15,25 @@ public class GameResources : MonoBehaviour
         }
     }
 
-    private int gold;
+    private int coins;
     private int energy;
+    private int health = 30;
+    private int wave = 1;
+    private int maxWave = 3;
     private int[] towerPrice = { 100, 200, 300 };
     private int[] monsterPrice = { 10, 20, 30 };
 
-    public void addGold(int value)
+    public void addCoins(int value)
     {
-        gold += value;
+        coins += value;
     }
-    public void setGold(int value)
+    public void setCoins(int value)
     {
-        gold = value;
+        coins = value;
     }
-    public int getGold()
+    public int getCoins()
     {
-        return gold;
+        return coins;
     }
     public void addEnergy(int value)
     {
@@ -52,9 +55,41 @@ public class GameResources : MonoBehaviour
     {
         return monsterPrice[index];
     }
+
+    public void setHealth(int value)
+    {
+        health = value;
+    }
+
+    public void addHealth(int value)
+    {
+        health += value;
+    }
+
+    public int getHealth()
+    {
+        return health;
+    }
+    public int getWave()
+    {
+        return wave;
+    }
+    public void nextVawe()
+    {
+        wave++;
+    }
+
+    public void setMaxWave(int value)
+    {
+        maxWave = value;
+    }
+    public int getMaxWave()
+    {
+        return maxWave;
+    }
     public GameResources()
     {
         energy = 300;
-        gold = 0;
+        coins = 0;
     }
 }

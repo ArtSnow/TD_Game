@@ -8,10 +8,17 @@ using TMPro;
 public class TowerDefenseAI : MonoBehaviour
 {
     [SerializeField] private Transform _cam;
+
+    [SerializeField] private TMP_Text energyText;
+    [SerializeField] private TMP_Text coinsText;
+    [SerializeField] private TMP_Text waveText;
+    [SerializeField] private TMP_Text maxWaveText;
+    [SerializeField] private TMP_Text healthText;
+
     private GridMap<GridNode> grid;
     private int map_width = 20;
     private int map_height = 10;
-    [SerializeField] private TMP_Text energyt;
+
     private void Awake()
     {
         grid = new GridMap<GridNode>(map_width, map_height, 25f, Vector3.zero, (GridMap<GridNode> g, int x, int y) => new GridNode(g, x, y));
@@ -39,7 +46,11 @@ public class TowerDefenseAI : MonoBehaviour
 
     private void Update()
     {
-        energyt.text = GameResources.i.getEnergy().ToString();
+        energyText.text = GameResources.i.getEnergy().ToString();
+        coinsText.text = GameResources.i.getCoins().ToString();
+        waveText.text = GameResources.i.getWave().ToString();
+        maxWaveText.text = GameResources.i.getMaxWave().ToString();
+        healthText.text = GameResources.i.getHealth().ToString();
         if (Input.GetKeyDown(KeyCode.B))
         {
             SpawnEnemyWave_1();
@@ -68,11 +79,11 @@ public class TowerDefenseAI : MonoBehaviour
             spawnPosition = ValidateWorldGridPosition(spawnPosition);
             spawnPosition += new Vector3(1, 1, 0) * grid.GetCellSize() * .5f;
             GridNode gnode = grid.GetGridObject(spawnPosition);
-            if (gnode.GetType() == 0)
+            if (gnode.GetCellType() == 0)
             {
                 GameResources.i.addEnergy(-price);
                 Instantiate(GameAssets.i.pfTower, spawnPosition, Quaternion.identity);
-                gnode.SetType(11);
+                gnode.SetCellType(11);
             }
         }
     }
@@ -84,11 +95,12 @@ public class TowerDefenseAI : MonoBehaviour
         {
             for (int x = 0; x < map_width; x++)
             {
+                int index = mapt[y * map_width + x];
                 GridNode gnode = grid.GetGridObject(x, y);
-                gnode.SetType(mapt[y*map_width + x]);
+                gnode.SetCellType(index);
                 Vector3 spawnPosition = grid.GetWorldPosition(x, y) + new Vector3(1, 1, 0) * grid.GetCellSize() * .5f;
                 Transform terrain = Instantiate(GameAssets.i.pfTerrain, spawnPosition, Quaternion.identity);
-                terrain.GetChild(0).GetComponent<SpriteRenderer>().sprite = GameAssets.i.mapSprites[mapt[y * map_width + x]];
+                terrain.GetChild(0).GetComponent<SpriteRenderer>().sprite = GameAssets.i.mapSprites[index];
             }
         }
     }
@@ -143,13 +155,12 @@ public class TowerDefenseAI : MonoBehaviour
 
     private void SpawnEnemy(Enemy.EnemyType enemyType)
     {
-        Vector3 spawnPosition = new Vector3(37.5f, 262.5f);
+        Vector3 spawnPosition = new Vector3(37.5f, 250f);
         List<Vector3> waypointPositionList = new List<Vector3> {
             new Vector3(37.5f, 62.5f),
             new Vector3(387.5f, 62.5f),
-            new Vector3(387.5f, -12.5f),
+            new Vector3(387.5f, 0f),
         };
-
         Enemy enemy = Enemy.Create(spawnPosition, enemyType);
         enemy.SetPathVectorList(waypointPositionList);
 
@@ -179,13 +190,13 @@ public class TowerDefenseAI : MonoBehaviour
             //Debug.DrawLine(worldPos01, worldPos11, Color.white, 999f);
             //Debug.DrawLine(worldPos10, worldPos11, Color.white, 999f);
         }
-        public void SetType(int setType)
+        public void SetCellType(int setType)
         {
             type = setType;
             grid.TriggerGridObjectChanged(x,y);
         }
 
-        public int GetType()
+        public int GetCellType()
         {
             return type;
         }

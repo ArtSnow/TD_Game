@@ -12,21 +12,21 @@ public class HealthSystem
     public event EventHandler OnHealed;
     public event EventHandler OnDead;
 
-    private int healthMax;
-    private int health;
+    private float healthMax;
+    private float health;
 
-    public HealthSystem(int healthMax)
+    public HealthSystem(float healthMax)
     {
         this.healthMax = healthMax;
         health = healthMax;
     }
 
-    public int GetHealth()
+    public float GetHealth()
     {
         return health;
     }
 
-    public int GetHealthMax()
+    public float GetHealthMax()
     {
         return healthMax;
     }
@@ -36,7 +36,7 @@ public class HealthSystem
         return (float)health / healthMax;
     }
 
-    public void Damage(int amount)
+    public void Damage(float amount)
     {
         health -= amount;
         if (health < 0)
@@ -62,7 +62,7 @@ public class HealthSystem
         return health <= 0;
     }
 
-    public void Heal(int amount)
+    public void Heal(float amount)
     {
         health += amount;
         if (health > healthMax)
@@ -80,7 +80,7 @@ public class HealthSystem
         OnHealed?.Invoke(this, EventArgs.Empty);
     }
 
-    public void SetHealthMax(int healthMax, bool fullHealth)
+    public void SetHealthMax(float healthMax, bool fullHealth)
     {
         this.healthMax = healthMax;
         if (fullHealth) health = healthMax;

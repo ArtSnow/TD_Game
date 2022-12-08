@@ -21,4 +21,5 @@ public class GameAssets : MonoBehaviour
     public Sprite[] mapSprites;
     public Sprite[] towerSprites;
     public Sprite[] monsterSprites;
+    public Transform generalTower;
 }
