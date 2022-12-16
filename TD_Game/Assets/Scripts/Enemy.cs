@@ -49,21 +49,14 @@ public class Enemy : MonoBehaviour
         return enemyHandler;
     }
 
-    public static Enemy Create(Vector3 position, EnemyType enemyType)
+    public static Enemy Create(Vector3 position, int enemyIndex)
     {
         Transform enemyTransform = Instantiate(GameAssets.i.pfEnemy, position, Quaternion.identity);
 
         Enemy enemyHandler = enemyTransform.GetComponent<Enemy>();
-        enemyHandler.SetEnemyType(enemyType);
+        enemyHandler.SetEnemyType(enemyIndex);
 
         return enemyHandler;
-    }
-
-    public enum EnemyType
-    {
-        Skelet,
-        Orc,
-        Bat,
     }
 
     private float speed = 30f;
@@ -111,38 +104,26 @@ public class Enemy : MonoBehaviour
         //*/
     }
 
-    private void SetEnemyType(EnemyType enemyType)
+    private void SetEnemyType(int enemyIndex)
     {
-        Sprite sprite;
-        switch (enemyType)
-        {
-            default:
-            case EnemyType.Skelet:
-                sprite = GameAssets.i.monsterSprites[0];
-                healthSystem.SetHealthMax(80, true);
-                energyReward = 10;
-                coinsReward = 1;
-                speed = 30f;
-                armor = 1;
-                break;
-            case EnemyType.Orc:
-                sprite = GameAssets.i.monsterSprites[1];
-                healthSystem.SetHealthMax(130, true);
-                energyReward = 20;
-                coinsReward = 2;
-                speed = 10f;
-                armor = 3;
-                break;
-            case EnemyType.Bat:
-                sprite = GameAssets.i.monsterSprites[2];
-                healthSystem.SetHealthMax(50, true);
-                energyReward = 30;
-                coinsReward = 3;
-                speed = 50f;
-                armor = 0;
-                break;
-        }
-       transform.Find("Sprite").GetComponent<SpriteRenderer>().sprite = sprite;
+        string outTitle;
+        Sprite outSprite;
+        int outDamage;
+        int outMaxHealth;
+        int outPrice;
+        int outEnergyReward;
+        int outCoinsReward;
+        int outArmor;
+        float outSpeed;
+
+        GameResources.i.getEnemy(enemyIndex, out outTitle, out outSprite, out outDamage, out outMaxHealth, out outPrice, out outEnergyReward, out outCoinsReward, out outArmor, out outSpeed);
+        damage = outDamage;
+        healthSystem.SetHealthMax(outMaxHealth, true);
+        energyReward = outEnergyReward;
+        coinsReward = outCoinsReward;
+        armor = outArmor;
+        speed = outSpeed;
+        transform.Find("Sprite").GetComponent<SpriteRenderer>().sprite = outSprite;
     }
 
     public void SetGetTarget(Func<IEnemyTargetable> getEnemyTarget)

@@ -27,11 +27,11 @@ public class CameraMovement : MonoBehaviour
 
     private void CameraMove()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(2) && Multiplayer.mode == 1)
         {
             dragOrigin = cam.ScreenToWorldPoint(Input.mousePosition);
         }
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(2) && Multiplayer.mode == 1)
         {
             Vector3 difference = dragOrigin - cam.ScreenToWorldPoint(Input.mousePosition);
 

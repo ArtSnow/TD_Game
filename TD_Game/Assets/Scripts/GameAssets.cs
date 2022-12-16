@@ -13,11 +13,12 @@ public class GameAssets : MonoBehaviour
             return _i;
         }
     }
-
     public Transform pfProjectileBall;
+    public HUDStats stats;
     public Transform pfTower;
     public Transform pfEnemy;
     public Transform pfTerrain;
+    public Transform pfButtonWS;
     public Sprite[] mapSprites;
     public Sprite[] towerSprites;
     public Sprite[] monsterSprites;

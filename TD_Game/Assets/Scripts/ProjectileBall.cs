@@ -5,7 +5,7 @@ using CodeMonkey.Utils;
 
 public class ProjectileBall : MonoBehaviour
 {
-    public static void Create(Vector3 spawnPosition, Enemy enemy, int damageAmount)
+    public static void Create(Vector3 spawnPosition, Enemy enemy, float damageAmount)
     {
         Transform arrowTransform = Instantiate(GameAssets.i.pfProjectileBall, spawnPosition, Quaternion.identity);
 
@@ -14,9 +14,9 @@ public class ProjectileBall : MonoBehaviour
     }
 
     private Enemy enemy;
-    private int damageAmount;
+    private float damageAmount;
 
-    private void Setup(Enemy enemy, int damageAmount)
+    private void Setup(Enemy enemy, float damageAmount)
     {
         this.enemy = enemy;
         this.damageAmount = damageAmount;
