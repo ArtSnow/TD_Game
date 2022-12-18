@@ -21,8 +21,8 @@ public class HUDStats : MonoBehaviour
         title = transform.Find("Title").GetComponent<TMP_Text>();
         sprite = transform.Find("Sprite").GetComponent<SpriteRenderer>();
         description = transform.Find("Description").GetComponent<TMP_Text>();
-        upgradeButton = transform.Find("UpgradeButton").GetComponent<Button>();
-        sellButton = transform.Find("SellButton").GetComponent<Button>();
+        upgradeButton = transform.Find("UpgradeButton").Find("Button").GetComponent<Button>();
+        sellButton = transform.Find("SellButton").Find("Button").GetComponent<Button>();
 
         hUDStats = this;
     }
