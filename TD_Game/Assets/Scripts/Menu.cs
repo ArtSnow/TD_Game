@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,7 +30,7 @@ public class Menu : MonoBehaviour
 
     private async void FindGame()
     {
-        int answer = await mp.FindGame(inputCode.text);
+        int answer = await mp.FindGame(inputCode.text.ToUpper());
         if (answer == 1)
         {
             SceneManager.LoadScene("Game");

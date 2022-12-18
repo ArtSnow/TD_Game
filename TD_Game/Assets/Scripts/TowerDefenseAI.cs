@@ -20,7 +20,9 @@ public class TowerDefenseAI : MonoBehaviour
     [SerializeField] private Transform cellInfo;
     [SerializeField] private Transform loader;
     [SerializeField] private Transform canvas;
-    [SerializeField] private Multiplayer mp;
+    [SerializeField] public Multiplayer mp;
+    
+
     private SpriteRenderer infoColor;
 
     private GridMap<GridNode> grid;
@@ -28,28 +30,27 @@ public class TowerDefenseAI : MonoBehaviour
     private int map_height = 10;
     private bool isBuild = false;
     private int tIndex = -1;
-    private int[] map;
-    private JSONNode wave;
 
-    private void Awake()
+    private async void Awake()
     {
         grid = new GridMap<GridNode>(map_width, map_height, 25f, Vector3.zero, (GridMap<GridNode> g, int x, int y) => new GridNode(g, x, y));
         _cam.transform.position = new Vector3(map_width*25/2,map_height*25/2,-10);
-        CreateMap();
         infoColor = cellInfo.GetComponent<SpriteRenderer>();
-        Loading();
-        
+        await Loading();
     }
 
-    private async void Loading()
+    private async Task Loading()
     {
         canvas.gameObject.SetActive(false);
         loader.gameObject.SetActive(true);
         loader.Find("Code").GetComponent<TMP_Text>().text = Multiplayer.code;
+        GameAssets gameAseets = GameAssets.i;
+        GameResources gameResources = GameResources.i;
         await CheckMode();
+        await CreateMap();
         loader.gameObject.SetActive(false);
         canvas.gameObject.SetActive(true);
-        maxWaveText.text = (await mp.getWavesCount(Multiplayer.code)).ToString();
+        maxWaveText.text = (await mp.GetWavesCount(Multiplayer.code)).ToString();
         await WaveManage();
     }
 
@@ -57,7 +58,7 @@ public class TowerDefenseAI : MonoBehaviour
     {
         int duration = 30;
         int maxDuration = 120;
-        int wavesCount = await mp.getWavesCount(Multiplayer.code);
+        int wavesCount = await mp.GetWavesCount(Multiplayer.code);
         for (int i = 0; i < wavesCount; i++)
         {
             int waveTimer = duration;
@@ -74,6 +75,7 @@ public class TowerDefenseAI : MonoBehaviour
                 timeToWaveText.text = "Next wave: " + waveTimer.ToString() + " seconds.";
             }
             await SpawnWave(i);
+            GameResources.i.addEnergy(GameResources.i.getEnergyIncome());
             waveText.text = i.ToString();
             duration = Mathf.Min(++duration, maxDuration);
         }
@@ -180,9 +182,20 @@ public class TowerDefenseAI : MonoBehaviour
             }
         }
     }
-    private void CreateMap()
+
+    public async void BuyEnemy(int enemyIndex, int energyIncome)
     {
-        int[] mapt = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        int price = GameResources.i.getEnemyPrice(enemyIndex);
+        if (GameResources.i.getCoins() >= price)
+        {
+            GameResources.i.addCoins(-price);
+            GameResources.i.addEnergyIncome(energyIncome);
+            await mp.AddEnemy(enemyIndex);
+        }
+    }
+    private async Task CreateMap()
+    {
+        JSONNode mapt = await mp.GetMap(Multiplayer.code);
         for (int y = 0; y < map_height; y++)
         {
             for (int x = 0; x < map_width; x++)
@@ -206,12 +219,29 @@ public class TowerDefenseAI : MonoBehaviour
     {
         float spawnTime = 0f;
         float timePerSpawn = .25f;
-        JSONNode wave = await mp.getWave(Multiplayer.code, index);
-        foreach(var kvp in wave)
+        JSONNode waves = await mp.GetWave(index);
+
+        JSONNode wave = waves["wave"];
+        JSONNode addMonsters = waves["addMonsters"];
+
+        if (wave.Count > 0)
         {
-            for (int i = 0; i < kvp.Value; i++)
+            foreach (var kvp in wave)
             {
-                FunctionTimer.Create(() => SpawnEnemy(int.Parse(kvp.Key)), spawnTime); spawnTime += timePerSpawn;
+                for (int i = 0; i < kvp.Value; i++)
+                {
+                    FunctionTimer.Create(() => SpawnEnemy(int.Parse(kvp.Key)), spawnTime); spawnTime += timePerSpawn;
+                }
+            }
+        }
+        if (addMonsters > 0)
+        {
+            foreach (var kvp in addMonsters)
+            {
+                for (int i = 0; i < kvp.Value; i++)
+                {
+                    FunctionTimer.Create(() => SpawnEnemy(int.Parse(kvp.Key)), spawnTime); spawnTime += timePerSpawn;
+                }
             }
         }
     }

@@ -64,6 +64,7 @@ public class Enemy : MonoBehaviour
     private int coinsReward = 0;
     private int damage = 1;
     private int armor = 1;
+    private int energyIncome;
 
 
 
@@ -115,14 +116,16 @@ public class Enemy : MonoBehaviour
         int outCoinsReward;
         int outArmor;
         float outSpeed;
+        int outEnergyIncome;
 
-        GameResources.i.getEnemy(enemyIndex, out outTitle, out outSprite, out outDamage, out outMaxHealth, out outPrice, out outEnergyReward, out outCoinsReward, out outArmor, out outSpeed);
+        GameResources.i.getEnemy(enemyIndex, out outTitle, out outSprite, out outDamage, out outMaxHealth, out outPrice, out outEnergyReward, out outCoinsReward, out outArmor, out outSpeed, out outEnergyIncome);
         damage = outDamage;
         healthSystem.SetHealthMax(outMaxHealth, true);
         energyReward = outEnergyReward;
         coinsReward = outCoinsReward;
         armor = outArmor;
         speed = outSpeed;
+        energyIncome = outEnergyIncome;
         transform.Find("Sprite").GetComponent<SpriteRenderer>().sprite = outSprite;
     }
 

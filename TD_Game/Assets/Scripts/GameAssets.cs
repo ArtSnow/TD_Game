@@ -14,7 +14,6 @@ public class GameAssets : MonoBehaviour
         }
     }
     public Transform pfProjectileBall;
-    public HUDStats stats;
     public Transform pfTower;
     public Transform pfEnemy;
     public Transform pfTerrain;

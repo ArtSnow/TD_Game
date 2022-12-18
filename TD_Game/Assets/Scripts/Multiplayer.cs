@@ -77,7 +77,7 @@ public class Multiplayer : MonoBehaviour
         }
     }
 
-    public async Task<JSONNode> getPlayer(string inCode)
+    public async Task<JSONNode> GetPlayer(string inCode)
     {
         JSONNode res;
         string url = "getPlayer";
@@ -100,7 +100,7 @@ public class Multiplayer : MonoBehaviour
         }
     }
 
-    public async Task<JSONNode> getMap(string inCode)
+    public async Task<JSONNode> GetMap(string inCode)
     {
         JSONNode res;
         string url = "getMap";
@@ -122,14 +122,15 @@ public class Multiplayer : MonoBehaviour
         }
     }
 
-    public async Task<JSONNode> getWave(string inCode, int index)
+    public async Task<JSONNode> GetWave(int index)
     {
         JSONNode res;
         string url = "getWave";
 
         Dictionary<string, string> data = new Dictionary<string, string>()
         {
-            {"code", inCode},
+            {"code", code},
+            {"player", (1 + (opponentIndex % 2)).ToString()},
             {"index", index.ToString()}
         };
 
@@ -137,7 +138,7 @@ public class Multiplayer : MonoBehaviour
 
         if (res != null)
         {
-            return res["wave"];
+            return res;
         }
         else
         {
@@ -145,7 +146,7 @@ public class Multiplayer : MonoBehaviour
         }
     }
 
-    public async Task<int> getWavesCount(string inCode)
+    public async Task<int> GetWavesCount(string inCode)
     {
         JSONNode res;
         string url = "getWavesCount";
@@ -167,6 +168,29 @@ public class Multiplayer : MonoBehaviour
         }
     }
 
+    public async Task<int> AddEnemy(int enemyIndex)
+    {
+        JSONNode res;
+        string url = "addEnemy";
+
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"code", code},
+            {"enemyIndex", enemyIndex.ToString()},
+            {"opponentIndex", opponentIndex.ToString()}
+        };
+
+        res = await REST_Post(url, data);
+
+        if (res != null)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
 
     private async Task<JSONNode> REST_Get(string url)
     {
