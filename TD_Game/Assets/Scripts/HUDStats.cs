@@ -27,10 +27,6 @@ public class HUDStats : MonoBehaviour
         hUDStats = this;
     }
 
-    private void Update()
-    {
-        upgradeButton.interactable = GameResources.i.getEnergy() >= price;
-    }
     public void SetupHUD(string inTitle, Sprite inSprite, string inDescription, int inType)
     {
         title.text = inTitle;
@@ -62,6 +58,7 @@ public class HUDStats : MonoBehaviour
         description.text = outDescription;
         upgradeButton.gameObject.SetActive(true);
         sellButton.gameObject.SetActive(true);
+        upgradeButton.interactable = GameResources.i.getEnergy() >= price;
         upgradeButton.onClick.RemoveAllListeners();
         sellButton.onClick.RemoveAllListeners();
         upgradeButton.onClick.AddListener(() => {
