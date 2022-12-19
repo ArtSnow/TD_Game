@@ -104,7 +104,7 @@ public class ShopUI : MonoBehaviour
 
                 GameResources.i.getEnemy(i, out outTitle, out outSprite, out outDamage, out outMaxHealth, out outPrice, out outEnergyReward, out outCoinsReward, out outArmor, out outSpeed, out outEnergyIncome);
 
-                string description = "Damage: " + outDamage.ToString("0.00") + "\nMaxHealth: " + outMaxHealth.ToString("0.00") + "\nArmor: " + outArmor.ToString("0.00") + "\nSpeed: " + outSpeed.ToString("0.00") + "\nPrice: " + outPrice.ToString();
+                string description = "Damage: " + outDamage.ToString("0.00") + "\nMaxHealth: " + outMaxHealth.ToString("0.00") + "\nArmor: " + outArmor.ToString("0.00") + "\nSpeed: " + outSpeed.ToString("0.00") + "\nEnergy Income: " + outEnergyIncome.ToString("0.00") + "\nPrice: " + outPrice.ToString();
 
                 buttons[i].transform.GetComponent<UIPointer>().SetupInfo(outTitle, outSprite, description, 0);
                 buttons[i].GetComponent<Button>().onClick.RemoveAllListeners();

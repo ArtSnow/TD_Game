@@ -192,6 +192,124 @@ public class Multiplayer : MonoBehaviour
         }
     }
 
+    public async Task<int> SetInfo()
+    {
+        JSONNode res;
+        string url = "setInfo";
+
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"code", code},
+            {"health", GameResources.i.getHealth().ToString()},
+            {"energyIncome", GameResources.i.getEnergyIncome().ToString()},
+            {"towersCount", GameResources.i.getTowersCount().ToString()},
+            {"player", (1 + (opponentIndex % 2)).ToString()}
+        };
+
+        res = await REST_Post(url, data);
+
+        if (res != null)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    public async Task<int> GetInfo()
+    {
+        JSONNode res;
+        string url = "getInfo";
+
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"code", code},
+            {"player", opponentIndex.ToString()}
+        };
+
+        res = await REST_Post(url, data);
+
+        if (res != null)
+        {
+            return res;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    public async Task<bool> GetDefeat()
+    {
+        JSONNode res;
+        string url = "getDefeat";
+
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"code", code},
+            {"player", opponentIndex.ToString()}
+        };
+
+        res = await REST_Post(url, data);
+
+        if (res != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public async Task<int> SetDefeat()
+    {
+        JSONNode res;
+        string url = "setDefeat";
+
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"code", code},
+            {"player", (1 + (opponentIndex % 2)).ToString()}
+        };
+
+        res = await REST_Post(url, data);
+
+        if (res != null)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    public async Task<int> EndGame()
+    {
+        JSONNode res;
+        string url = "endGame";
+
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"code", code}
+        };
+
+        res = await REST_Post(url, data);
+
+        if (res != null)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+
     private async Task<JSONNode> REST_Get(string url)
     {
         JSONNode res;

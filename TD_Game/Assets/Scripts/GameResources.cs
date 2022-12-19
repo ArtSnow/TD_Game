@@ -19,6 +19,7 @@ public class GameResources : MonoBehaviour
     private int energy;
     private int health;
     private int energyIncome;
+    private int towersCount;
 
     public struct TowerStats 
     {
@@ -168,22 +169,33 @@ public class GameResources : MonoBehaviour
     {
         return health;
     }
+
+    public void addTowersCount(int value)
+    {
+        towersCount += value;
+    }
+
+    public int getTowersCount()
+    {
+        return towersCount;
+    }
     public GameResources()
     {
         energy = 300;
         coins = 0;
         health = 30;
         energyIncome = 0;
+        towersCount = 0;
         towers = new TowerStats[5];
-        towers[0] = new TowerStats("First", GameAssets.i.towerSprites[0], 75f, 25, .5f, 100, 1.2f, 1.1f, 1.1f);
-        towers[1] = new TowerStats("Second", GameAssets.i.towerSprites[1], 150f, 150, 2f, 100, 1.1f, 1.2f, 1.1f);
-        towers[2] = new TowerStats("Third", GameAssets.i.towerSprites[2], 40f, 5, .1f, 100, 1.1f, 1.1f, 1.2f);
+        towers[0] = new TowerStats("First", GameAssets.i.towerSprites[0], 70f, 20, .5f, 25, 1.1f, 1.05f, 1.05f);
+        towers[1] = new TowerStats("Second", GameAssets.i.towerSprites[1], 100f, 100, 2f, 25, 1.05f, 1.1f, 1.05f);
+        towers[2] = new TowerStats("Third", GameAssets.i.towerSprites[2], 40f, 5, .1f, 25, 1.05f, 1.05f, 1.1f);
         towers[3] = new TowerStats("Locked", GameAssets.i.towerSprites[3], 0, 0, 0, -1, 0, 0, 0);
         towers[4] = new TowerStats("Locked", GameAssets.i.towerSprites[4], 0, 0, 0, -1, 0, 0, 0);
         enemies = new EnemyStats[5];
-        enemies[0] = new EnemyStats("Skeleton", GameAssets.i.monsterSprites[0], 2, 80, 10, 10, 1, 1, 30f, 1);
-        enemies[1] = new EnemyStats("Orc", GameAssets.i.monsterSprites[1], 3, 130, 20, 20, 2, 3, 10f, 2);
-        enemies[2] = new EnemyStats("Bat", GameAssets.i.monsterSprites[2], 1, 50, 20, 20, 2, 0, 50f, 2);
+        enemies[0] = new EnemyStats("Skeleton", GameAssets.i.monsterSprites[0], 2, 80, 10, 1, 1, 1, 30f, 1);
+        enemies[1] = new EnemyStats("Orc", GameAssets.i.monsterSprites[1], 3, 200, 20, 2, 2, 3, 10f, 2);
+        enemies[2] = new EnemyStats("Bat", GameAssets.i.monsterSprites[2], 1, 40, 20, 2, 2, 0, 70f, 2);
         enemies[3] = new EnemyStats("Locked", GameAssets.i.monsterSprites[3], 0, 0, -1, 0, 0, 0, 0, 0);
         enemies[4] = new EnemyStats("Locked", GameAssets.i.monsterSprites[4], 0, 0, -1, 0, 0, 0, 0, 0);
     }

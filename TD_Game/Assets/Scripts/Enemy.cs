@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 //using V_AnimationSystem;
 using CodeMonkey.Utils;
+using System.Threading.Tasks;
 
 public class Enemy : MonoBehaviour
 {
@@ -64,8 +65,8 @@ public class Enemy : MonoBehaviour
     private int coinsReward = 0;
     private int damage = 1;
     private int armor = 1;
-    private int energyIncome;
-
+    private int energyIncome = 1;
+    private Animator animator;
 
 
     private HealthSystem healthSystem;
@@ -92,7 +93,7 @@ public class Enemy : MonoBehaviour
         enemyList.Add(this);
         characterBase = gameObject.GetComponent<Character_Base>();
         healthSystem = new HealthSystem(100);
-        SetStateNormal();
+        animator = transform.Find("Sprite").GetComponent<Animator>();
     }
 
     private void Start()
@@ -127,6 +128,7 @@ public class Enemy : MonoBehaviour
         speed = outSpeed;
         energyIncome = outEnergyIncome;
         transform.Find("Sprite").GetComponent<SpriteRenderer>().sprite = outSprite;
+        transform.Find("Sprite").GetComponent<Animator>().runtimeAnimatorController = GameAssets.i.monsterAnimators[enemyIndex];
     }
 
     public void SetGetTarget(Func<IEnemyTargetable> getEnemyTarget)
@@ -137,17 +139,7 @@ public class Enemy : MonoBehaviour
     private void Update()
     {
         pathfindingTimer -= Time.deltaTime;
-
-        switch (state)
-        {
-            case State.Normal:
-                HandleMovement();
-                break;
-            case State.Attacking:
-                break;
-            case State.Busy:
-                break;
-        }
+        HandleMovement();
     }
 
     public bool IsDead()
@@ -155,37 +147,21 @@ public class Enemy : MonoBehaviour
         return healthSystem.IsDead();
     }
 
-    private void SetStateNormal()
-    {
-        state = State.Normal;
-    }
-
-    private void SetStateAttacking()
-    {
-        state = State.Attacking;
-    }
-
-
-    public void Damage(float damageAmount)
+    public async void Damage(float damageAmount)
     {
         healthSystem.Damage(damageAmount-armor);
         if (IsDead())
         {
             GameResources.i.addEnergy(energyReward);
             GameResources.i.addCoins(coinsReward);
+            animator.SetTrigger("Die");
+            await Task.Delay(500);
             Destroy(gameObject);
-        }
-    }
-
-    public void Damage(IEnemyTargetable attacker)
-    {
-        healthSystem.Damage(30);
-        GameResources.i.addEnergy(energyReward);
-        GameResources.i.addCoins(coinsReward);
-        if (IsDead())
+        } else
         {
-            Destroy(gameObject);
+            animator.SetTrigger("Hurt");
         }
+
     }
 
     private void HandleMovement()

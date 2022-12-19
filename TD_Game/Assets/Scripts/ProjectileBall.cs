@@ -5,10 +5,10 @@ using CodeMonkey.Utils;
 
 public class ProjectileBall : MonoBehaviour
 {
-    public static void Create(Vector3 spawnPosition, Enemy enemy, float damageAmount)
+    public static void Create(Vector3 spawnPosition, Enemy enemy, float damageAmount, int towerIndex)
     {
         Transform arrowTransform = Instantiate(GameAssets.i.pfProjectileBall, spawnPosition, Quaternion.identity);
-
+        arrowTransform.Find("Sprite").GetComponent<SpriteRenderer>().sprite = GameAssets.i.projectileSprites[towerIndex];
         ProjectileBall projectileArrow = arrowTransform.GetComponent<ProjectileBall>();
         projectileArrow.Setup(enemy, damageAmount);
     }
