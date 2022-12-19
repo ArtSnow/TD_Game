@@ -6,11 +6,13 @@ using UnityEngine;
 using CodeMonkey;
 using CodeMonkey.Utils;
 using System;
+using UnityEngine.EventSystems;
 
 public class Tower : MonoBehaviour
 {
     private Vector3 projectileShootFromPosition;
     private float range;
+    private int index;
     private float damageAmount;
     private float shootTimerMax;
     private float shootTimer;
@@ -40,7 +42,7 @@ public class Tower : MonoBehaviour
             if (enemy != null)
             {
                 // Enemy in range!
-                ProjectileBall.Create(projectileShootFromPosition, enemy, damageAmount);
+                ProjectileBall.Create(projectileShootFromPosition, enemy, damageAmount, index);
             }
         }
     }
@@ -66,6 +68,7 @@ public class Tower : MonoBehaviour
         title = outTitle;
         price = (int)(outPrice/2);
         sprite = outSprite;
+        index = towerIndex;
 
         transform.Find("Sprite").GetComponent<SpriteRenderer>().sprite = outSprite;
     }
@@ -120,8 +123,10 @@ public class Tower : MonoBehaviour
         price = (int)(price * 1.25);
     }
 
-    private void OnMouseEnter()
+    private void OnMouseUp()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
         TowerRangeOverlay.Show_Static(this);
         HUDStats.hUDStats.SetupHUD(this);
     }

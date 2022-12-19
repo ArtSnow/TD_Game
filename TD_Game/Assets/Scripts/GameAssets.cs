@@ -18,8 +18,12 @@ public class GameAssets : MonoBehaviour
     public Transform pfEnemy;
     public Transform pfTerrain;
     public Transform pfButtonWS;
+    public Transform pfGeneralTower;
+    public Transform pfSpawnPortal;
     public Sprite[] mapSprites;
     public Sprite[] towerSprites;
     public Sprite[] monsterSprites;
-    public Transform generalTower;
+    public RuntimeAnimatorController[] monsterAnimators;
+    public Sprite[] projectileSprites;
+    public Sprite generalTowerSprite;
 }

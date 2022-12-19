@@ -5,6 +5,7 @@ using CodeMonkey.Utils;
 using TMPro;
 using System.Threading.Tasks;
 using SimpleJSON;
+using UnityEngine.SceneManagement;
 
 public class TowerDefenseAI : MonoBehaviour
 {
@@ -51,6 +52,7 @@ public class TowerDefenseAI : MonoBehaviour
         loader.gameObject.SetActive(false);
         canvas.gameObject.SetActive(true);
         maxWaveText.text = (await mp.GetWavesCount(Multiplayer.code)).ToString();
+        InfoManage();
         await WaveManage();
     }
 
@@ -80,6 +82,47 @@ public class TowerDefenseAI : MonoBehaviour
             duration = Mathf.Min(++duration, maxDuration);
         }
     }
+    private async Task InfoManage()
+    {
+        bool win = false;
+        bool end = false;
+        while (!end)
+        {
+            int waveTimer = 5;
+            while (waveTimer > 0)
+            {
+                float timer = 0f;
+                while (timer < 1f)
+                {
+                    timer = Mathf.Min(timer + Time.deltaTime / 1f, 1f);
+                    await Task.Yield();
+                }
+                win = await mp.GetDefeat();
+                if (win)
+                {
+                    end = true;
+                    break;
+                }
+                if (GameResources.i.getHealth() <= 0)
+                {
+                    end = true;
+                    win = false;
+                    break;
+                }
+                timer = 0f;
+                waveTimer--;
+            }
+            await mp.SetInfo();
+        }
+        loader.gameObject.SetActive(true);
+        loader.Find("Code").GetComponent<TMP_Text>().text = win ? "YOU ARE WINNER!" : "YOU LOSE!";
+        await mp.EndGame();
+        Time.timeScale = 0;
+        await Task.Delay(5000);
+        SceneManager.LoadScene("Menu");
+
+    }
+
     private async Task CheckMode()
     {
         float timer = 0f;
@@ -93,7 +136,7 @@ public class TowerDefenseAI : MonoBehaviour
             }
             timer = 0f;
             closeTimer += 1;
-            if (closeTimer > 360)
+            if (closeTimer > 100)
                 break;
             Multiplayer.mode = await mp.CheckMode(Multiplayer.code);
             Debug.Log(Multiplayer.mode);
@@ -179,6 +222,7 @@ public class TowerDefenseAI : MonoBehaviour
                 Tower tower = Tower.Create(spawnPosition, towerIndex, transform);
                 gnode.SetCellType(11);
                 gnode.SetTower(tower);
+                GameResources.i.addTowersCount(1);
             }
         }
     }
@@ -208,6 +252,8 @@ public class TowerDefenseAI : MonoBehaviour
                 terrain.GetChild(0).GetComponent<SpriteRenderer>().sprite = GameAssets.i.mapSprites[index];
             }
         }
+        Instantiate(GameAssets.i.pfGeneralTower, new Vector3(387.5f, 12.5f), Quaternion.identity);
+        Instantiate(GameAssets.i.pfSpawnPortal, new Vector3(37.5f, 237.5f), Quaternion.identity);
     }
 
     private Vector3 ValidateWorldGridPosition(Vector3 position)
@@ -218,7 +264,7 @@ public class TowerDefenseAI : MonoBehaviour
     private async Task SpawnWave(int index)
     {
         float spawnTime = 0f;
-        float timePerSpawn = .25f;
+        
         JSONNode waves = await mp.GetWave(index);
 
         JSONNode wave = waves["wave"];
@@ -226,16 +272,19 @@ public class TowerDefenseAI : MonoBehaviour
 
         if (wave.Count > 0)
         {
+            float timePerSpawn = .6f;
             foreach (var kvp in wave)
             {
+
                 for (int i = 0; i < kvp.Value; i++)
                 {
                     FunctionTimer.Create(() => SpawnEnemy(int.Parse(kvp.Key)), spawnTime); spawnTime += timePerSpawn;
                 }
             }
         }
-        if (addMonsters > 0)
+        if (addMonsters.Count > 0)
         {
+            float timePerSpawn = .25f;
             foreach (var kvp in addMonsters)
             {
                 for (int i = 0; i < kvp.Value; i++)
@@ -247,11 +296,11 @@ public class TowerDefenseAI : MonoBehaviour
     }
     private void SpawnEnemy(int index)
     {
-        Vector3 spawnPosition = new Vector3(37.5f, 250f);
+        Vector3 spawnPosition = new Vector3(37.5f, 237.5f);
         List<Vector3> waypointPositionList = new List<Vector3> {
             new Vector3(37.5f, 62.5f),
             new Vector3(387.5f, 62.5f),
-            new Vector3(387.5f, 0f),
+            new Vector3(387.5f, 12.5f),
         };
         Enemy enemy = Enemy.Create(spawnPosition, index);
         enemy.SetPathVectorList(waypointPositionList);

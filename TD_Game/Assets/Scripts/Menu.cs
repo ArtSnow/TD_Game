@@ -21,19 +21,31 @@ public class Menu : MonoBehaviour
 
     private async void StartGame()
     {
+        createGameButton.interactable = false;
+        findGameButton.interactable = false;
+        inputCode.interactable = false;
         int answer = await mp.StartGame();
         if (answer == 1)
         {
             SceneManager.LoadScene("Game");
         }
+        inputCode.interactable = true;
+        createGameButton.interactable = true;
+        findGameButton.interactable = true;
     }
 
     private async void FindGame()
     {
+        createGameButton.interactable = false;
+        findGameButton.interactable = false;
+        inputCode.interactable = false;
         int answer = await mp.FindGame(inputCode.text.ToUpper());
         if (answer == 1)
         {
             SceneManager.LoadScene("Game");
         }
+        inputCode.interactable = true;
+        createGameButton.interactable = true;
+        findGameButton.interactable = true;
     }
 }

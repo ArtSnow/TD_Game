@@ -35,8 +35,8 @@ public class HUDStats : MonoBehaviour
         type = inType;
         if (type == 0)
         {
-            upgradeButton.gameObject.SetActive(false);
-            sellButton.gameObject.SetActive(false);
+            upgradeButton.transform.parent.gameObject.SetActive(false);
+            sellButton.transform.parent.gameObject.SetActive(false);
         }
 
     }
@@ -56,9 +56,8 @@ public class HUDStats : MonoBehaviour
         price = outPrice;
         string outDescription = "Range: " + outRange.ToString("0.00") + "\nDamage: " + outDamageAmount.ToString("0.00") + "\nAttackTime: " + outShootTimerMax.ToString("0.00") + "\nPrice: " + outPrice.ToString();
         description.text = outDescription;
-        upgradeButton.gameObject.SetActive(true);
-        sellButton.gameObject.SetActive(true);
-        upgradeButton.interactable = GameResources.i.getEnergy() >= price;
+        upgradeButton.transform.parent.gameObject.SetActive(true);
+        sellButton.transform.parent.gameObject.SetActive(true);
         upgradeButton.onClick.RemoveAllListeners();
         sellButton.onClick.RemoveAllListeners();
         upgradeButton.onClick.AddListener(() => {
@@ -72,9 +71,11 @@ public class HUDStats : MonoBehaviour
         sellButton.onClick.AddListener(() => {
             GameResources.i.addEnergy((int)(outPrice));
             Destroy(tower.gameObject);
+            GameResources.i.addTowersCount(-1);
             StartCoroutine(Sold());
             
         });
+        upgradeButton.interactable = GameResources.i.getEnergy() >= price;
     }
 
     IEnumerator Sold()
