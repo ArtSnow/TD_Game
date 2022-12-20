@@ -35,10 +35,13 @@ public class TowerDefenseAI : MonoBehaviour
     private int tIndex = -1;
     private async void Awake()
     {
+        GameAssets gameAseets = GameAssets.i;
+        GameResources gameResources = GameResources.i;
         grid = new GridMap<GridNode>(map_width, map_height, 25f, Vector3.zero, (GridMap<GridNode> g, int x, int y) => new GridNode(g, x, y));
         _cam.transform.position = new Vector3(map_width*25/2,map_height*25/2,-10);
         infoColor = cellInfo.GetComponent<SpriteRenderer>();
         await Loading();
+
     }
 
     private async Task Loading()
@@ -46,8 +49,6 @@ public class TowerDefenseAI : MonoBehaviour
         canvas.gameObject.SetActive(false);
         loader.gameObject.SetActive(true);
         loader.Find("Code").GetComponent<TMP_Text>().text = Multiplayer.code;
-        GameAssets gameAseets = GameAssets.i;
-        GameResources gameResources = GameResources.i;
         await CheckMode();
         await CreateMap();
         loader.gameObject.SetActive(false);

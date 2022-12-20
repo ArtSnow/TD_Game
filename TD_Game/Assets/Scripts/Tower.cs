@@ -1,11 +1,6 @@
 
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using CodeMonkey;
-using CodeMonkey.Utils;
-using System;
 using UnityEngine.EventSystems;
 
 public class Tower : MonoBehaviour
