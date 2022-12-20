@@ -91,3 +91,6 @@ MonoBehaviour:
   - {fileID: 553350583, guid: f70118c845a00034db25aa56c1bfafb1, type: 3}
   - {fileID: 553350583, guid: f70118c845a00034db25aa56c1bfafb1, type: 3}
   generalTowerSprite: {fileID: 1517498596, guid: 422f57f6a695d334081c77818656e09c, type: 3}
+  GeneralTowerDie: {fileID: 8300000, guid: 60526626e0ceea048bb4a4fe88c43f63, type: 3}
+  GeneralTowerHurt: {fileID: 8300000, guid: 88dfd1815962dc74fb9fe36ed55614ba, type: 3}
+  enemyExplode: {fileID: 8300000, guid: a1aca848bc82f29488cf93690ad1b7ce, type: 3}

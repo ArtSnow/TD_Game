@@ -16,7 +16,8 @@ public class OpponentInfo : MonoBehaviour
     private async void GetInfo()
     {
         JSONNode info = await mp.GetInfo();
-        string description = "Health: " + info["health"].AsFloat.ToString("0.00") + "\nEnergy Income: " + info["energyIncome"].AsFloat.ToString("0.00") + "\nTowers Count: " + info["towersCount"].AsFloat.ToString("0.00");
+        Debug.Log(info);
+        string description = "Health: " + info["health"].AsFloat.ToString("0.00") + "\nEnergy Income: " + info["energyIncome"].AsFloat.ToString("0.00") + "\nTowers Count: " + info["towersCount"].AsInt.ToString();
         HUDStats.hUDStats.SetupHUD("Opponent", GameAssets.i.towerSprites[0], description, 0);
     }
 }

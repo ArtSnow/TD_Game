@@ -20,6 +20,7 @@ public class GameResources : MonoBehaviour
     private int health;
     private int energyIncome;
     private int towersCount;
+    private int wave;
 
     public struct TowerStats 
     {
@@ -170,6 +171,16 @@ public class GameResources : MonoBehaviour
         return health;
     }
 
+    public void setWave(int value)
+    {
+        wave = value;
+    }
+
+    public int getWave()
+    {
+        return wave;
+    }
+
     public void addTowersCount(int value)
     {
         towersCount += value;
@@ -181,15 +192,16 @@ public class GameResources : MonoBehaviour
     }
     public GameResources()
     {
-        energy = 300;
+        energy = 75;
         coins = 0;
         health = 30;
         energyIncome = 0;
         towersCount = 0;
+        wave = 0;
         towers = new TowerStats[5];
-        towers[0] = new TowerStats("First", GameAssets.i.towerSprites[0], 70f, 20, .5f, 25, 1.1f, 1.05f, 1.05f);
-        towers[1] = new TowerStats("Second", GameAssets.i.towerSprites[1], 100f, 100, 2f, 25, 1.05f, 1.1f, 1.05f);
-        towers[2] = new TowerStats("Third", GameAssets.i.towerSprites[2], 40f, 5, .1f, 25, 1.05f, 1.05f, 1.1f);
+        towers[0] = new TowerStats("First", GameAssets.i.towerSprites[0], 70f, 25, .8f, 25, 1.1f, 1.05f, 1.05f);
+        towers[1] = new TowerStats("Second", GameAssets.i.towerSprites[1], 100f, 100, 2.5f, 25, 1.05f, 1.1f, 1.05f);
+        towers[2] = new TowerStats("Third", GameAssets.i.towerSprites[2], 50f, 10, .2f, 25, 1.05f, 1.05f, 1.1f);
         towers[3] = new TowerStats("Locked", GameAssets.i.towerSprites[3], 0, 0, 0, -1, 0, 0, 0);
         towers[4] = new TowerStats("Locked", GameAssets.i.towerSprites[4], 0, 0, 0, -1, 0, 0, 0);
         enemies = new EnemyStats[5];

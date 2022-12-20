@@ -47,7 +47,7 @@ public class Multiplayer : MonoBehaviour
             code = inCode;
             mode = 1;
             opponentIndex = 1;
-            return 1;
+            return res["answer"];
         }
         else
         {
@@ -177,7 +177,7 @@ public class Multiplayer : MonoBehaviour
         {
             {"code", code},
             {"enemyIndex", enemyIndex.ToString()},
-            {"opponentIndex", opponentIndex.ToString()}
+            {"player", opponentIndex.ToString()}
         };
 
         res = await REST_Post(url, data);
@@ -218,7 +218,7 @@ public class Multiplayer : MonoBehaviour
         }
     }
 
-    public async Task<int> GetInfo()
+    public async Task<JSONNode> GetInfo()
     {
         JSONNode res;
         string url = "getInfo";
@@ -233,7 +233,7 @@ public class Multiplayer : MonoBehaviour
 
         if (res != null)
         {
-            return res;
+            return res["info"];
         }
         else
         {
@@ -253,15 +253,15 @@ public class Multiplayer : MonoBehaviour
         };
 
         res = await REST_Post(url, data);
-
         if (res != null)
         {
-            return true;
+            return res["defeat"];
         }
         else
         {
             return false;
         }
+        
     }
 
     public async Task<int> SetDefeat()

@@ -26,4 +26,8 @@ public class GameAssets : MonoBehaviour
     public RuntimeAnimatorController[] monsterAnimators;
     public Sprite[] projectileSprites;
     public Sprite generalTowerSprite;
+
+    public AudioClip GeneralTowerDie;
+    public AudioClip GeneralTowerHurt;
+    public AudioClip enemyExplode;
 }

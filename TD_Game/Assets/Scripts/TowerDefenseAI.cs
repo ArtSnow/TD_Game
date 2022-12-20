@@ -22,7 +22,9 @@ public class TowerDefenseAI : MonoBehaviour
     [SerializeField] private Transform loader;
     [SerializeField] private Transform canvas;
     [SerializeField] public Multiplayer mp;
-    
+    [SerializeField] private Transform generalTower;
+    [SerializeField] private Transform portal;
+
 
     private SpriteRenderer infoColor;
 
@@ -31,7 +33,6 @@ public class TowerDefenseAI : MonoBehaviour
     private int map_height = 10;
     private bool isBuild = false;
     private int tIndex = -1;
-
     private async void Awake()
     {
         grid = new GridMap<GridNode>(map_width, map_height, 25f, Vector3.zero, (GridMap<GridNode> g, int x, int y) => new GridNode(g, x, y));
@@ -61,9 +62,10 @@ public class TowerDefenseAI : MonoBehaviour
         int duration = 30;
         int maxDuration = 120;
         int wavesCount = await mp.GetWavesCount(Multiplayer.code);
+        int waveTimer;
         for (int i = 0; i < wavesCount; i++)
         {
-            int waveTimer = duration;
+            waveTimer = duration;
             while (waveTimer > 0)
             {
                 float timer = 0f;
@@ -76,11 +78,45 @@ public class TowerDefenseAI : MonoBehaviour
                 waveTimer--;
                 timeToWaveText.text = "Next wave: " + waveTimer.ToString() + " seconds.";
             }
+            GameResources.i.setWave(i);
             await SpawnWave(i);
             GameResources.i.addEnergy(GameResources.i.getEnergyIncome());
-            waveText.text = i.ToString();
+            waveText.text = (i+1).ToString();
             duration = Mathf.Min(++duration, maxDuration);
         }
+        waveTimer = 30;
+        while (waveTimer > 0)
+        {
+            float timer = 0f;
+            while (timer < 1f)
+            {
+                timer = Mathf.Min(timer + Time.deltaTime / 1f, 1f);
+                await Task.Yield();
+            }
+            timer = 0f;
+            waveTimer--;
+            timeToWaveText.text = "Game over in: " + waveTimer.ToString() + " seconds.";
+        }
+        await mp.SetInfo();
+        JSONNode info = await mp.GetInfo();
+        bool win = false;
+        bool draw = false;
+        if (info["health"].AsInt > GameResources.i.getHealth())
+        {
+            win = true;
+        } else if (info["health"].AsInt < GameResources.i.getHealth())
+        {
+            win = false;
+        } else
+        {
+            draw = true;
+        }
+        loader.gameObject.SetActive(true);
+        loader.Find("Code").GetComponent<TMP_Text>().text = draw ? "DRAW" : win ? "YOU ARE WINNER!" : "YOU LOSE!";
+        Time.timeScale = 0;
+        await Task.Delay(5000);
+        await mp.EndGame();
+        SceneManager.LoadScene("Menu");
     }
     private async Task InfoManage()
     {
@@ -105,8 +141,10 @@ public class TowerDefenseAI : MonoBehaviour
                 }
                 if (GameResources.i.getHealth() <= 0)
                 {
+                    GeneralTower.audioS.PlayOneShot(GameAssets.i.GeneralTowerDie);
                     end = true;
                     win = false;
+                    await mp.SetDefeat();
                     break;
                 }
                 timer = 0f;
@@ -116,9 +154,9 @@ public class TowerDefenseAI : MonoBehaviour
         }
         loader.gameObject.SetActive(true);
         loader.Find("Code").GetComponent<TMP_Text>().text = win ? "YOU ARE WINNER!" : "YOU LOSE!";
-        await mp.EndGame();
         Time.timeScale = 0;
         await Task.Delay(5000);
+        await mp.EndGame();
         SceneManager.LoadScene("Menu");
 
     }
@@ -252,8 +290,9 @@ public class TowerDefenseAI : MonoBehaviour
                 terrain.GetChild(0).GetComponent<SpriteRenderer>().sprite = GameAssets.i.mapSprites[index];
             }
         }
-        Instantiate(GameAssets.i.pfGeneralTower, new Vector3(387.5f, 12.5f), Quaternion.identity);
-        Instantiate(GameAssets.i.pfSpawnPortal, new Vector3(37.5f, 237.5f), Quaternion.identity);
+
+        generalTower.position = new Vector3(387.5f, 12.5f);
+        portal.position = new Vector3(37.5f, 237.5f);
     }
 
     private Vector3 ValidateWorldGridPosition(Vector3 position)
@@ -302,7 +341,7 @@ public class TowerDefenseAI : MonoBehaviour
             new Vector3(387.5f, 62.5f),
             new Vector3(387.5f, 12.5f),
         };
-        Enemy enemy = Enemy.Create(spawnPosition, index);
+        Enemy enemy = Enemy.Create(spawnPosition, index, GameResources.i.getWave());
         enemy.SetPathVectorList(waypointPositionList);
     }
 

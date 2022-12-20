@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class GeneralTower : MonoBehaviour
 {
+    public static Animator animator { get; private set; }
+    public static AudioSource audioS { get; private set; }
+    private void Awake()
+    {
+        animator = transform.Find("Sprite").GetComponent<Animator>();
+        audioS = transform.GetComponent<AudioSource>();
+    }
     private void OnMouseEnter()
     {
         string description = "EnergyIncome: " + GameResources.i.getEnergyIncome().ToString("0.00");
