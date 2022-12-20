@@ -47,7 +47,7 @@ public class Multiplayer : MonoBehaviour
             code = inCode;
             mode = 1;
             opponentIndex = 1;
-            return res["answer"];
+            return res["answer"].AsInt;
         }
         else
         {

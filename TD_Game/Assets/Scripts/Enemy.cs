@@ -110,7 +110,7 @@ public class Enemy : MonoBehaviour
         energyReward = outEnergyReward;
         coinsReward = outCoinsReward;
         armor = Mathf.RoundToInt(outArmor * multi - (multi - 1) / 2);
-        speed = Mathf.RoundToInt(outSpeed * multi - (multi - 1) / 2);
+        speed = outSpeed;
         energyIncome = outEnergyIncome;
         transform.Find("Sprite").GetComponent<SpriteRenderer>().sprite = outSprite;
         transform.Find("Sprite").GetComponent<Animator>().runtimeAnimatorController = GameAssets.i.monsterAnimators[enemyIndex];
